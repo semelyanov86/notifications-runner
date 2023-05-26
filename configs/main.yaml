@@ -1,0 +1,16 @@
+env: local
+db:
+  host: "95.143.0.106"
+  login: "developer"
+  password: ""
+  dbname: "vtiger"
+  maxOpenConns: 25
+  maxIdleConns: 25
+  maxIdleTime: "15m"
+cache:
+  ttl: 60000s
+slack:
+  token: ""
+  channelId: "C05A1TA2BMX"
+telegram:
+  token: ""

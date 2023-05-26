@@ -1,0 +1,10 @@
+.idea
+.data
+.bin
+.DS_Store
+vendor
+
+.env
+.envrc
+cover.out
+configs/prod.yaml
