@@ -25,7 +25,7 @@ func Run(configPath string) {
 
 	repos := repository.NewRepositories(db, *cfg)
 	services := service.NewServices(*cfg)
-	handlers := handler.NewHandler(*repos, *services, memcache)
+	handlers := handler.NewHandler(*repos, *services, memcache, db)
 	err = handlers.Init()
 	if err != nil {
 		logger.Error(logger.ConvertErrorToStruct(err, 1025, nil))
