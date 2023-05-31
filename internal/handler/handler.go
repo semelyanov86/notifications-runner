@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"github.com/octoper/go-ray"
 	"github.com/semelyanov86/notifications-runner/internal/domain"
 	"github.com/semelyanov86/notifications-runner/internal/repository"
 	"github.com/semelyanov86/notifications-runner/internal/service"
@@ -85,6 +86,7 @@ func (h Handler) listenForNotifications(ctx context.Context, wg *sync.WaitGroup,
 			time.Sleep(5 * time.Second) // Wait for 5 seconds before polling again
 
 			entity, err := h.Repos.Entities.GetNextNotProcessedEntity(id)
+			ray.Ray(entity)
 			if errors.Is(repository.ErrRecordNotFound, err) {
 				continue
 			}
@@ -120,11 +122,17 @@ func (h Handler) listenForNotifications(ctx context.Context, wg *sync.WaitGroup,
 func (h Handler) doSend(entity *domain.Entity) error {
 	switch entity.Label {
 	case "Slack":
-		_, _, err := h.Services.Slack.Send(entity.Description)
-		// TODO: fill entity with channel and timestamp
+		timestamp, channelId, err := h.Services.Slack.Send(entity.Description)
+		entity.ChatId = channelId
 		if err != nil {
 			return h.Repos.Entities.MarkAsError(entity, err)
 		}
+		i, err := strconv.ParseInt(timestamp, 10, 64)
+		if err != nil {
+			return h.Repos.Entities.MarkAsError(entity, err)
+		}
+		tm := time.Unix(i, 0)
+		entity.NotifyDateTime = tm
 	default:
 		return ErrNotSupportedType
 	}
