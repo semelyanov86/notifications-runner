@@ -1,6 +1,6 @@
 package service
 
-import "github.com/semelyanov86/notifications-runner/internal/config"
+import "Notifications/internal/config"
 
 type Services struct {
 	Slack Slack

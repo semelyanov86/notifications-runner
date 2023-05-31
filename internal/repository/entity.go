@@ -1,11 +1,11 @@
 package repository
 
 import (
+	"Notifications/internal/config"
+	"Notifications/internal/domain"
 	"context"
 	"database/sql"
 	"errors"
-	"github.com/semelyanov86/notifications-runner/internal/config"
-	"github.com/semelyanov86/notifications-runner/internal/domain"
 	"time"
 )
 

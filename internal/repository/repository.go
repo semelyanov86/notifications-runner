@@ -1,9 +1,9 @@
 package repository
 
 import (
+	"Notifications/internal/config"
 	"database/sql"
 	"errors"
-	"github.com/semelyanov86/notifications-runner/internal/config"
 )
 
 var ErrRecordNotFound = errors.New("record not found")

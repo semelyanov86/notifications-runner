@@ -1,9 +1,9 @@
 package main
 
 import (
+	"Notifications/internal/app"
 	"flag"
 	"fmt"
-	"github.com/semelyanov86/notifications-runner/internal/app"
 	"log"
 	"os"
 )

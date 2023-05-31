@@ -1,15 +1,17 @@
 package app
 
 import (
+	"Notifications/internal/config"
+	"Notifications/internal/handler"
+	"Notifications/internal/repository"
+	"Notifications/internal/service"
+	"Notifications/pkg/cache"
+	"Notifications/pkg/logger"
 	"context"
 	"database/sql"
-	"github.com/semelyanov86/notifications-runner/internal/config"
-	"github.com/semelyanov86/notifications-runner/internal/handler"
-	"github.com/semelyanov86/notifications-runner/internal/repository"
-	"github.com/semelyanov86/notifications-runner/internal/service"
-	"github.com/semelyanov86/notifications-runner/pkg/cache"
-	"github.com/semelyanov86/notifications-runner/pkg/logger"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // Run initializes whole application.

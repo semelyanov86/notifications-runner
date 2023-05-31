@@ -1,8 +1,9 @@
-module github.com/semelyanov86/notifications-runner
+module Notifications
 
 go 1.20
 
 require (
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/octoper/go-ray v0.1.5
 	github.com/sirupsen/logrus v1.9.2
 	github.com/slack-go/slack v0.12.2

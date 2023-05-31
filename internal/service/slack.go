@@ -1,9 +1,9 @@
 package service
 
 import (
+	"Notifications/internal/config"
+	"Notifications/pkg/e"
 	"fmt"
-	"github.com/semelyanov86/notifications-runner/internal/config"
-	"github.com/semelyanov86/notifications-runner/pkg/e"
 	"github.com/slack-go/slack"
 )
 

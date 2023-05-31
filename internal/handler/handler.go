@@ -1,16 +1,16 @@
 package handler
 
 import (
+	"Notifications/internal/domain"
+	"Notifications/internal/repository"
+	"Notifications/internal/service"
+	"Notifications/pkg/cache"
+	"Notifications/pkg/e"
+	"Notifications/pkg/logger"
 	"context"
 	"database/sql"
 	"errors"
 	"github.com/octoper/go-ray"
-	"github.com/semelyanov86/notifications-runner/internal/domain"
-	"github.com/semelyanov86/notifications-runner/internal/repository"
-	"github.com/semelyanov86/notifications-runner/internal/service"
-	"github.com/semelyanov86/notifications-runner/pkg/cache"
-	"github.com/semelyanov86/notifications-runner/pkg/e"
-	"github.com/semelyanov86/notifications-runner/pkg/logger"
 	"os"
 	"os/signal"
 	"strconv"
