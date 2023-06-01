@@ -76,13 +76,11 @@ production/connect:
 ## production/deploy/api: deploy the api to production
 .PHONY: production/deploy/api
 production/deploy/api:
-	rsync -P ./bin/linux_amd64/api developer@${production_host_ip}:~/notification
-	rsync -rP --delete ./migrations developer@${production_host_ip}:~
+	rsync -P ./bin/linux_amd64/app developer@${production_host_ip}:~/notification
 	rsync -P ./remote/production/notification.service developer@${production_host_ip}:~
 	ssh -t developer@${production_host_ip} '\
 		cd ~/notification \
 		&& sudo mv ~/notification.service /etc/systemd/system/ \
 		&& sudo systemctl enable notification \
 		&& sudo systemctl restart notification \
-		&& sudo service apache2 restart \
 	'
