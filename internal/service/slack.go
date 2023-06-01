@@ -30,5 +30,6 @@ func (s Slack) Send(msg string) (string, string, error) {
 	}
 
 	fmt.Printf("Message sent successfully to channel %s at %s", channelId, timestamp)
+	fmt.Println()
 	return timestamp, channelId, nil
 }

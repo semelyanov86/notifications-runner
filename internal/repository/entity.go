@@ -24,12 +24,12 @@ func NewEntityRepository(db *sql.DB, config2 config.Config) Entity {
 func (e Entity) GetLastProcessedEntity() (int, error) {
 	var query = "SELECT MAX(`crmid`) AS 'crmid' FROM vtiger_crmentity WHERE deleted = 0 AND setype = ? AND (label = ? OR label = ?)"
 
-	var order = 0
+	var order sql.NullInt32
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	err := e.DB.QueryRowContext(ctx, query, "VDNotification", "Sent", "Error").Scan(
+	err := e.DB.QueryRowContext(ctx, query, "VDNotifications", "Sent", "Error").Scan(
 		&order,
 	)
 
@@ -41,18 +41,21 @@ func (e Entity) GetLastProcessedEntity() (int, error) {
 			return 0, err
 		}
 	}
-	return order, nil
+	if order.Valid {
+		return int(order.Int32), nil
+	}
+	return 0, nil
 }
 
 func (e Entity) GetNextNotProcessedEntity(last int) (*domain.Entity, error) {
-	var query = "SELECT * FROM vtiger_crmentity WHERE crmid > ? AND setype = ? AND label = ?"
+	var query = "SELECT crmid, `description`, label FROM vtiger_crmentity WHERE deleted = 0 AND crmid > ? AND setype = ? AND label = ?"
 
 	var entity domain.Entity
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	var err = e.DB.QueryRowContext(ctx, query, last, "VDNotification", "Draft").Scan(&entity.Crmid, &entity.Description, &entity.Label)
+	var err = e.DB.QueryRowContext(ctx, query, last, "VDNotifications", "Draft").Scan(&entity.Crmid, &entity.Description, &entity.Label)
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -66,14 +69,15 @@ func (e Entity) GetNextNotProcessedEntity(last int) (*domain.Entity, error) {
 }
 
 func (e Entity) GetEntityById(id int) (*domain.Entity, error) {
-	var query = "SELECT crmid, label, description, chat_id, notify_datetime, notify_status, notify_type FROM vtiger_crmentity INNER JOIN vtiger_vdnotifications ON vtiger_vdnotifications.vdnotificationsid = vtiger_crmentity.crmid WHERE crmid = ?"
+	var query = "SELECT crmid, label, `description`, chat_id, notify_status, notify_type FROM vtiger_crmentity INNER JOIN vtiger_vdnotifications ON vtiger_vdnotifications.vdnotificationsid = vtiger_crmentity.crmid WHERE crmid = ?"
 
 	var entity domain.Entity
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	var err = e.DB.QueryRowContext(ctx, query, id, "VDNotification").Scan(&entity.Crmid, &entity.Label, &entity.Description, &entity.ChatId, &entity.NotifyDateTime, &entity.NotifyStatus, &entity.NotifyType)
+	var err = e.DB.QueryRowContext(ctx, query, id).Scan(&entity.Crmid, &entity.Label, &entity.Description, &entity.ChatId, &entity.NotifyStatus, &entity.NotifyType)
+
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
@@ -115,7 +119,7 @@ func (e Entity) MarkAsSent(entity *domain.Entity) error {
 }
 
 func (e Entity) MarkAsError(entity *domain.Entity, err error) error {
-	var query = "UPDATE vtiger_vdnotificatons SET notify_datetime = ?, notify_status = ?, chat_id = ?, error_log = ? WHERE id = ?"
+	var query = "UPDATE vtiger_vdnotifications SET notify_datetime = ?, notify_status = ?, chat_id = ?, error_log = ? WHERE vdnotificationsid = ?"
 	var args = []any{
 		time.Now(),
 		"Error",
