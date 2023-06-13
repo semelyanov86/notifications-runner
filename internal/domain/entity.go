@@ -13,4 +13,5 @@ type Entity struct {
 	NotifyDateTime time.Time
 	NotifyStatus   string
 	NotifyType     string
+	KeyId          string
 }

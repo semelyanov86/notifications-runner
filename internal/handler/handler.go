@@ -122,7 +122,7 @@ func (h Handler) listenForNotifications(ctx context.Context, wg *sync.WaitGroup,
 func (h Handler) doSend(entity *domain.Entity) error {
 	switch entity.NotifyType {
 	case "Slack":
-		_, channelId, err := h.Services.Slack.Send(entity.Description)
+		_, channelId, err := h.Services.Slack.Send(*entity)
 		entity.ChatId.String = channelId
 		entity.ChatId.Valid = true
 		if err != nil {

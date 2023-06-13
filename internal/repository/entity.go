@@ -69,14 +69,14 @@ func (e Entity) GetNextNotProcessedEntity(last int) (*domain.Entity, error) {
 }
 
 func (e Entity) GetEntityById(id int) (*domain.Entity, error) {
-	var query = "SELECT crmid, label, `description`, chat_id, notify_status, notify_type FROM vtiger_crmentity INNER JOIN vtiger_vdnotifications ON vtiger_vdnotifications.vdnotificationsid = vtiger_crmentity.crmid WHERE crmid = ?"
+	var query = "SELECT crmid, label, `description`, chat_id, notify_status, notify_type, key_id FROM vtiger_crmentity INNER JOIN vtiger_vdnotifications ON vtiger_vdnotifications.vdnotificationsid = vtiger_crmentity.crmid WHERE crmid = ?"
 
 	var entity domain.Entity
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	var err = e.DB.QueryRowContext(ctx, query, id).Scan(&entity.Crmid, &entity.Label, &entity.Description, &entity.ChatId, &entity.NotifyStatus, &entity.NotifyType)
+	var err = e.DB.QueryRowContext(ctx, query, id).Scan(&entity.Crmid, &entity.Label, &entity.Description, &entity.ChatId, &entity.NotifyStatus, &entity.NotifyType, &entity.KeyId)
 
 	if err != nil {
 		switch {

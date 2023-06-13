@@ -2,6 +2,7 @@ package service
 
 import (
 	"Notifications/internal/config"
+	"Notifications/internal/domain"
 	"Notifications/pkg/e"
 	"fmt"
 	"github.com/slack-go/slack"
@@ -17,12 +18,20 @@ func NewSlack(config config.Config) Slack {
 	}
 }
 
-func (s Slack) Send(msg string) (string, string, error) {
-	api := slack.New(s.Config.Slack.Token)
+func (s Slack) Send(entity domain.Entity) (string, string, error) {
+	token := entity.KeyId
+	if token == "" {
+		token = s.Config.Slack.Token
+	}
+	channelId := s.Config.Slack.ChannelId
+	if entity.ChatId.Valid {
+		channelId = entity.ChatId.String
+	}
+	api := slack.New(token)
 
 	channelId, timestamp, err := api.PostMessage(
-		s.Config.Slack.ChannelId,
-		slack.MsgOptionText(msg, false),
+		channelId,
+		slack.MsgOptionText(entity.Description, false),
 	)
 
 	if err != nil {
